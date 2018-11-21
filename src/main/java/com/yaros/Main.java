@@ -1,23 +1,47 @@
 package com.yaros;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
 
+    static Random random = new Random();
+
+    public static boolean in_battle = false;
 
     public static void main(String[] args){
 
         Scanner scanner = new Scanner(System.in);
-        //boolean daily_check = false;
+
+        //Character character = new Character("Hero", 22, 22, Item.weaponless(), Item.casual_outfit(), 3,2,3);
+        //Npc character = new Npc("Hero", 22, 22, Item.weaponless(), Item.casual_outfit(), 3,2,3);
+        Npc character = Commands.genCharacter();
+        System.out.println("Welcome to the RPG 1_1!!! enjoy this game killing monsters in 'dungeon' or visit shop by 'shop'");
+        System.out.println("Command list: 'shop', 'buy 1'(+number of item) 'equip 1' 'use 1', 'inventory', 'dungeon',");
 
         for(;;){
             String com = scanner.nextLine();
+            String[] command;
 
             try {
-                String[] command = com.split(" ");
+                command = com.split(" ");
+            }catch (Exception e){
+                System.out.println("invalid command");
+                continue;
+            }
                 switch (command[0]) {
 
+
                     case "inventory": {
-                        Character.inventory();
+                        character.inventory();
+                        break;
+                    }
+
+                    case "equip":{
+                        try {
+                            character.equip_weapon_or_armor(Integer.parseInt(command[1]));
+                        }catch(Exception e){
+                            System.out.println("invalid command");
+                        }
                         break;
                     }
 
@@ -26,21 +50,27 @@ public class Main {
                         break;
                     }
 
+                    case "use": {
+                        character.inventory_use_item(Integer.parseInt(command[1]), null);
+                        break;
+                    }
+
                     case "buy": {
-                        Shop.shop_buy_item(command);
+                        Shop.shop_buy_item(command, character);
                         break;
                     }
 
                     case "drop": {
-                        Character.inventory_drop(command);
+                        character.inventory_drop(command);
                         break;
                     }
 
+                    case "dungeon":{
+                        Quest.quest1(character);
+                        break;
+                    }
                 }
-            }catch (Exception e){
-                System.out.println("invalid command");
-                continue;
-            }
+
         }
     }
 }

@@ -19,10 +19,11 @@ public class Shop {
     }
 
 
-    public static void shop_buy_item(String[] command){
+    public static void shop_buy_item(String[] command, Npc character){
 
         if(is_goods == false) {
-            System.out.println("all goods were sold");
+            System.out.println("no goods now");
+            return;
         }
         int index = 0;
         try{
@@ -31,26 +32,31 @@ public class Shop {
             System.out.println("invalid value (item number)");
             return;
         }
-        Item[] inventory = Character.get_inventory();
+        Item[] inventory = character.get_inventory();
 
         for (int i = 0; i < inventory.length; i++){
-            if (inventory[i] == null && Character.get_gold() > goods[i].get_price()) {
-                Character.inventory_add_item(goods[index], i);
-                Character.change_gold(goods[index].get_price());
-                System.out.println(goods[index].get_name() + " was bought for " + goods[index].get_price());
-                goods[index] = null;
-                goods_check();
+            try {
+                if (inventory[i] == null && character.get_gold() > goods[index].get_price()) {
+                    character.inventory_add_item(goods[index], i);
+                    character.change_gold(goods[index].get_price());
+                    System.out.println(goods[index].get_name() + " was bought for " + goods[index].get_price());
+                    goods[index] = null;
+                    goods_check();
+                    break;
+                } else if (inventory[i] == null && character.get_gold() < goods[index].get_price()) {
+                    System.out.println("You havent enough gold");
+                    break;
+                } else if (inventory[i] != null && i == (inventory.length - 1)) {
+                    System.out.println("your inventory is full!");
+                    break;
+                } else if (inventory[i] != null && i != (inventory.length - 1)) {
+                    continue;
+                }
                 break;
-            }else if(inventory[i] == null && Character.get_gold() < goods[i].get_price()){
-                System.out.println("You havent enough gold");
+            }catch(Exception e){
+                System.out.println("this item has been already sold");
                 break;
-            }else if (inventory[i] != null && i == (inventory.length -1)){
-                System.out.println("your inventory is full!");
-                break;
-            }else if(inventory[i] != null && i != (inventory.length -1)){
-                continue;
             }
-            break;
         }
 
 
